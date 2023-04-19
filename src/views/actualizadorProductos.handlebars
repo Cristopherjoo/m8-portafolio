@@ -1,0 +1,105 @@
+<!-- Formulario para actualizar producto -->
+<h3 class="text-center mt-5 mb-4">Actualizador de Productos</h3>
+<h3 class="card-title" id="product-id-title">ID del Producto actualizado: </h3>
+
+<form id="formulario-producto">
+  <div class="mb-3">
+    <label for="modalnombre" class="form-label">Actualiza el nombre del Producto</label>
+    <input type="text" class="form-control" name="nombre" id="modalnombre" placeholder="Ingrese nombre producto" maxlength="100" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="modalprecio" class="form-label">Actualiza el precio del Producto</label>
+    <input type="text" class="form-control" name="precio" id="modalprecio" placeholder="Ingrese precio producto" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="modalstock" class="form-label">Actualiza el Stock del Producto</label>
+    <input type="number" class="form-control" name="stock" id="modalstock" placeholder="Ingrese stock producto" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="modalimagen" class="form-label">Actualiza la Imagen URL del Producto</label>
+    <input type="url" class="form-control" name="imagen" id="modalimagen" placeholder="ingresa la url de tu imagen" maxlength="200" value="" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="modalcategoria" class="form-label">Actualiza la Categoría del Producto</label>
+    <select id="modalcategoria" name="categoria" class="form-select">
+      {{#each categoria}}
+      <option value="{{categoria}}">{{nombre_categoria}}</option>
+      {{/each}}
+    </select>
+    <p class="card-text">ID Categoría: {{id_categoria}}</p>
+  </div>
+
+  <div class="mb-3">
+    <label for="modaldescripcion" class="form-label">Descripción</label>
+    <textarea class="form-control" name="descripcion" id="modaldescripcion" rows="5" maxlength="200" placeholder="Ingrese descripción producto" required></textarea>
+  </div>
+
+  <input type="hidden" name="id_producto" id="modalidproducto" value="{{id_producto}}">
+  <script>// Función para extraer el ID del producto de la URL
+function getProductIdFromUrl() {
+  const url = new URL(window.location.href);
+  const pathSegments = url.pathname.split('/');
+  const id_producto = pathSegments[pathSegments.length - 1];
+  return id_producto;
+}
+
+// Establecer el ID del producto en el campo oculto y mostrarlo en el título
+const id_producto = getProductIdFromUrl();
+document.getElementById('modalidproducto').value = id_producto;
+document.querySelector('.card-title').textContent = `ID del Producto actualizado: ${id_producto}`;
+</script>
+  <!-- Botón para enviar el formulario -->
+  <div class="d-flex justify-content-center mt-3">
+    <button type="submit" class="btn btn-primary mr-2" style="margin-right: 10px;">Actualizar Producto</button>
+    <a href="/" class="btn btn-danger">Cerrar el Actualizador</a>
+  </div>
+</form>
+<script>
+  document.getElementById('formulario-producto').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const id_producto = document.getElementById('modalidproducto').value;
+  const nombre = document.getElementById('modalnombre').value;
+  const precio = document.getElementById('modalprecio').value;
+  const stock = document.getElementById('modalstock').value;
+  const imagen = document.getElementById('modalimagen').value;
+  const categoria = document.getElementById('modalcategoria').value;
+  const descripcion = document.getElementById('modaldescripcion').value;
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/v1/productos/${id_producto}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nombre_producto: nombre,
+        precio,
+        stock,
+        imagen,
+        categoria,
+        descripcion,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error al actualizar el producto: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    alert('Producto actualizado con éxito');
+
+    // Recarga la página y redirige al mantenedor
+    window.location.href = 'http://localhost:3000/mantenedor';
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert(`Error: ${error}`);
+  }
+});
+</script>

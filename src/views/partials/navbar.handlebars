@@ -1,0 +1,66 @@
+  <!-- INICIO NAVBAR -->
+  <body>
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">ECOMMERCE WEB</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/mantenedor" id="linkInventario">Mantenedor</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/carro" id="linkCarro">Carro de Compras</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/ventas" id="linkVentas">Ventas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/register">Regístrate</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+          </li>
+          <li class="nav-item">
+              <a href="#" class="nav-link" onclick="logout()">Cerrar sesión</a>
+          </li>
+            <li class="nav-item">
+              <a class="nav-link" id="usuarios-count">Usuarios</a>
+          </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- FIN NAVBAR -->
+    <script>
+  function logout() {
+  // Elimina el token JWT almacenado en el localStorage
+  localStorage.removeItem('jwt');
+  // Redirige al usuario a la página principal o a la página de inicio de sesión
+  window.location.href = '/';
+}
+</script>
+<script>
+  const updateUsuariosCount = async () => {
+  const response = await fetch('/api/v1/usuarios/count');
+  const data = await response.json();
+  const count = data.count;
+  const countElement = document.getElementById('usuarios-count');
+  countElement.textContent = `Usuarios (${count})`;
+};
+
+updateUsuariosCount();
+</script>

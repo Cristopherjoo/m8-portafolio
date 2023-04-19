@@ -1,0 +1,191 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12">
+      <h3 class="text-center mb-4">INGRESAR PRODUCTO</h3>
+<form id="formulario" method="POST">
+  <div class="mb-3">
+    <label for="modalnombre" class="form-label">Nombre Producto</label>
+    <input type="text" class="form-control" name="nombre" id="modalnombre" placeholder="Ingrese nombre producto" maxlength="100" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="modalprecio" class="form-label">Precio</label>
+    <input type="number" class="form-control" name="precio" id="modalprecio" placeholder="Ingrese precio producto" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="modalstock" class="form-label">Stock</label>
+    <input type="number" class="form-control" name="stock" id="modalstock" placeholder="Ingrese stock producto" required>
+  </div>
+
+<div class="mb-3">
+  <label for="modalimagen" class="form-label">Imagen URL</label>
+  <input type="url" class="form-control" name="imagen" id="modalimagen" placeholder="Ingresar url de imagen" maxlength="200" value="" required>
+</div>
+
+<div class="mb-3">
+  <label for="modalcategoria" class="form-label">Categoría</label>
+  <select id="modalcategoria" name="categoria" class="form-select">
+    <option value="">-- Seleccione una categoría --</option>
+    {{#each categoria}}
+      <option value="{{id_categoria}}">{{nombre_categoria}}</option>
+    {{/each}}
+  </select>
+  <a id="actualizarCategoriaBtn" class="btn btn-outline-warning ms-3" style="margin-top: 1rem;">Actualizar Categoría</a>
+</div>
+
+  <div class="mb-3">
+    <label for="modaldescripcion" class="form-label">Descripción</label>
+    <textarea class="form-control" name="descripcion" id="modaldescripcion" rows="5" maxlength="200" placeholder="Ingrese descripción producto" required></textarea>
+  </div>
+
+  <div class="d-flex justify-content-center mt-3">
+    <button type="submit" class="btn btn-primary me-3">Añadir Producto</button>
+    <a href="/" class="btn btn-primary">Cerrar el Mantenedor</a>
+  </div>
+</form>
+
+
+<form id="formulario-categoria" method="POST">
+  <div class="mb-3">
+    <label for="modalcategoria" class="form-label">Nombre Categoría</label>
+    <input type="text" class="form-control" name="nombre_categoria" id="modalcategoria" placeholder="Ingrese nombre categoría" maxlength="200" required>
+  </div>
+
+  <div class="d-flex justify-content-center mt-3">
+    <button type="submit" class="btn btn-primary me-3">Añadir Categoría</button>
+    <a href="/" class="btn btn-primary me-3">Cerrar el Mantenedor</a>
+  </div>
+</form>
+
+  
+  {{#each productos}}
+  <h3 class="text-center mt-5 mb-4">Productos</h3>
+  <div class="card mb-3">
+<img src="{{imagen}}" class="card-img-top" alt="{{nombre_producto}}" style="width: 300px; height: 300px;">
+    <div class="card-body">
+      <h5 class="card-title">ID Producto: {{id_producto}}</h5>
+      <h5 class="card-title">Nombre: {{nombre_producto}}</h5>
+      <p class="card-text">Descripción: {{descripcion}}</p>
+      <p class="card-text">Stock: {{stock}}</p>
+      <div class="d-flex justify-content-center">
+        <a href="/actualizar/{{id_producto}}" class="btn btn-success ms-3">Actualizar Producto</a>
+        <a href="/eliminar/{{id_producto}}" class="btn btn-danger ms-3" onclick="return confirm('¿Estás seguro de querer eliminar este producto?')">Eliminar Producto</a>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+</div>
+
+<style>
+  #formulario,
+  #formulario-categoria
+  {
+    padding: 50px;
+    border: 10px solid rgb(157, 110, 233);
+    background-color: rgb(139, 182, 185);    
+    margin: 10px 0
+  }
+h3{
+  color: rgb(114, 88, 159);
+}
+
+</style>
+
+
+<script>
+  const form = document.getElementById('formulario-categoria');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Prevenir comportamiento por defecto del formulario (recargar la página)
+
+    const nombre_categoria = form.elements['nombre_categoria'].value.trim();
+    if (!nombre_categoria) {
+      alert('El nombre de la categoría es requerido.');
+      return;
+    }
+
+    const categoriaData = { nombre_categoria };
+
+    const response = await fetch('/api/v1/categorias', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(categoriaData)
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      alert(`Error al añadir categoría: ${data.message}`);
+      return;
+    }
+
+    const data = await response.json();
+    alert(`Categoría añadida con éxito: ${data.data.nombre_categoria}`);
+
+    // Redirigir a la página del mantenedor
+    window.location.href = '/mantenedor';
+  });
+</script>
+
+<script>
+  document.getElementById('actualizarCategoriaBtn').addEventListener('click', () => {
+    const selectElement = document.getElementById('modalcategoria');
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const nombre_categoria = selectedOption.textContent;
+
+    window.location.href = `/actualizar_categoria/${nombre_categoria}`;
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+<script>
+const formulario = document.getElementById("formulario");
+
+formulario.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const nombre = document.getElementById("modalnombre").value;
+  const precio = document.getElementById("modalprecio").value;
+  const stock = document.getElementById("modalstock").value;
+  const imagen = document.getElementById("modalimagen").value;
+  const descripcion = document.getElementById("modaldescripcion").value;
+
+  const categoriaElement = document.getElementById("modalcategoria");
+  const categoriaId = categoriaElement.value;
+  const nombre_categoria = categoriaElement.options[categoriaElement.selectedIndex].textContent;
+
+  console.log("Categoría seleccionada:", categoriaId, "Nombre de la categoría:", nombre_categoria);
+
+  const url = "/api/v1/productos";
+
+  try {
+    const response = await axios.post(
+      url,
+      {
+        nombre,
+        precio,
+        stock,
+        imagen,
+        categoria: nombre_categoria,
+        descripcion,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log(response);
+    alert(response.data.message);
+    formulario.reset();
+    window.location.reload(); // recargar la página después de ingresar el producto
+  } catch (error) {
+    console.error(error);
+    alert("Error al ingresar el producto.");
+  }
+});
+
+</script>

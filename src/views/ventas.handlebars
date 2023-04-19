@@ -1,0 +1,41 @@
+<div class="container">
+  <h2>Ventas</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID de la venta</th>
+        <th>ID del producto</th>
+        <th>Cantidad</th>
+        <th>Precio unitario</th>
+        <th>Precio total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each ventas}}
+      <tr data-precio-total="{{precio_total}}">
+        <td>{{id_ventas}}</td>
+        <td>{{id_producto}}</td>
+        <td>{{cantidad}}</td>
+        <td>${{precio_unitario}}</td>
+        <td>${{precio_total}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <h3 id="totalVentas">Total de todas las ventas: $</h3>
+</div>
+
+<script>
+  const filasVentas = document.querySelectorAll('[data-precio-total]');
+  let totalVentas = 0;
+
+  filasVentas.forEach((fila) => {
+    const precioTotal = parseFloat(fila.getAttribute('data-precio-total'));
+    totalVentas += precioTotal;
+  });
+
+  const elementoTotalVentas = document.getElementById('totalVentas');
+  elementoTotalVentas.textContent = `Total de todas las ventas: $${totalVentas.toFixed(2)}`;
+</script>
+
+

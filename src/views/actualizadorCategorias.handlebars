@@ -1,0 +1,76 @@
+<!-- Formulario para actualizar categoría -->
+<h3 class="text-center mt-5 mb-4">Actualizador de Categorías</h3>
+<h3 class="card-title" id="category-name-title">Nombre de la Categoría actualizada: </h3>
+
+<form id="formulario-categoria">
+  <div class="mb-3">
+    <label for="modalnombre" class="form-label">Actualiza el nombre de la Categoría</label>
+    <input type="text" class="form-control" name="nombre" id="modalnombre" placeholder="Ingrese nombre categoría" maxlength="100" required>
+  </div>
+
+  <input type="hidden" name="nombre_categoria" id="modalnombrecategoria">
+
+<div class="d-flex justify-content-center mt-3">
+  <button type="submit" class="btn btn-primary mr-2" style="margin-right: 10px;">Actualizar Categoría</button>
+  <a href="/mantenedor" class="btn btn-secondary" style="margin-right: 10px;">Retornar al Mantenedor</a>
+  <a href="/" class="btn btn-danger">Cerrar Actualizador</a>
+</div>
+</form>
+
+<script>
+  async function updateCategory() {
+    const nombre_categoria = document.getElementById('modalnombrecategoria').value;
+    const nuevo_nombre = document.getElementById('modalnombre').value;
+
+    try {
+      // Obtener la ID de la categoría por su nombre
+      const response = await fetch(`http://localhost:3000/api/v1/categorias/${encodeURIComponent(nombre_categoria)}`);
+      const data = await response.json();
+      const id_categoria = data.id_categoria;
+
+      // Actualizar la categoría por su ID
+      const updateResponse = await fetch(`http://localhost:3000/api/v1/categorias/${id_categoria}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre_categoria: nuevo_nombre,
+        }),
+      });
+
+      if (!updateResponse.ok) {
+        throw new Error(`Error al actualizar la categoría: ${updateResponse.status}`);
+      }
+
+      alert('Categoría actualizada con éxito');
+
+      // Redirigir al mantenedor
+      window.location.href = 'http://localhost:3000/mantenedor';
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert(`Error: ${error}`);
+    }
+  }
+
+  document.getElementById('formulario-categoria').addEventListener('submit', (e) => {
+    e.preventDefault();
+    updateCategory();
+  });
+
+  // Obtener y mostrar el nombre de la categoría a actualizar
+  function getCategoryNameFromUrl() {
+    const url = new URL(window.location.href);
+    const pathSegments = url.pathname.split('/');
+    const nombre_categoria = decodeURIComponent(pathSegments[pathSegments.length - 1]);
+    return nombre_categoria;
+  }
+
+  const nombre_categoria = getCategoryNameFromUrl();
+  document.getElementById('modalnombrecategoria').value = nombre_categoria;
+  document.querySelector('.card-title').textContent = `Nombre de la Categoría actualizada: ${nombre_categoria}`;
+</script>
+
+
+

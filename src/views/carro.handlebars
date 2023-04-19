@@ -1,0 +1,155 @@
+<div class="container">
+  <h2>Carro de Compras</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Imagen</th>
+        <th>Nombre del Producto</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+        <th>Precio Total</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each products}}
+      <tr>
+        <td>
+          <img src="{{imagen}}" alt="{{nombre_producto}}" style="width: 50px; height: auto;">
+        </td>
+        <td>{{nombre_producto}}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" onclick="updateQuantity('{{id_producto}}', -1)">-</button>
+          <span id="cantidad-{{id_producto}}">{{cantidad}}</span>
+          <button class="btn btn-sm btn-primary" onclick="updateQuantity('{{id_producto}}', 1)">+</button>
+        </td>
+        <td>${{precio}}</td>
+        <td id="total-{{id_producto}}">${{total}}</td>
+        <td>
+          <button class="btn btn-danger" onclick="deleteProduct('{{id_producto}}')">Eliminar</button>
+        </td>
+        <td>
+          <button id="comprar-btn-{{id_producto}}" class="btn btn-primary comprar-btn" onclick="buyProduct('{{id_producto}}')">Comprar</button>
+        </td>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+<script>
+async function buyProduct(id_producto) {
+  const cantidad = document.getElementById(`cantidad-${id_producto}`).textContent;
+  const precio_total = document.getElementById(`total-${id_producto}`).textContent.slice(1); // Elimina el símbolo '$'
+  const precio_unitario = parseFloat(precio_total) / parseInt(cantidad);
+
+  try {
+    const response = await fetch('/ventas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id_producto, cantidad, precio_unitario, precio_total }),
+    });
+
+    if (response.ok) {
+      alert('Venta realizada con éxito');
+
+      // Eliminar el producto del carrito
+      fetch(`/carrotemp/deleteCompletely/${id_producto}`, {
+        method: 'DELETE'
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error al eliminar el producto del carro');
+        }
+      })
+      .then(data => {
+        // Eliminar la fila de la tabla en la página
+        const row = document.querySelector(`#cantidad-${id_producto}`).closest('tr');
+        row.remove();
+        alert('El Producto comprado ya no estará en el carro');
+      })
+      .catch(error => {
+        console.error('Error al eliminar el producto del carro:', error);
+      });
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message);
+    }
+  } catch (error) {
+    console.error('Error al realizar la venta:', error);
+  }
+}
+</script>
+<script>
+function updateQuantity(id_producto, delta) {
+  // Obtener el elemento de cantidad y el precio total
+  const cantidadElement = document.getElementById(`cantidad-${id_producto}`);
+  const totalElement = document.getElementById(`total-${id_producto}`);
+
+  // Calcular la nueva cantidad
+  const newCantidad = parseInt(cantidadElement.textContent) + delta;
+  
+  if (newCantidad < 1) {
+    alert('La cantidad no puede ser menor que 1');
+    return;
+  }
+
+  // Enviar la nueva cantidad al servidor
+  fetch(`/carrotemp/update/${id_producto}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ cantidad: newCantidad })
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Error al actualizar la cantidad del producto');
+    }
+  })
+  .then(data => {
+    // Mostrar un mensaje de alerta
+    if (delta > 0) {
+      alert('Se añadió una unidad del producto');
+    } else {
+      alert('Se quitó una unidad del producto');
+    }
+    // Recargar la página
+    window.location.reload();
+  })
+  .catch(error => {
+    console.error('Error al actualizar la cantidad del producto:', error);
+  });
+}
+
+function deleteProduct(id_producto) {
+  // Enviar la solicitud de eliminación al servidor
+  fetch(`/carrotemp/deleteCompletely/${id_producto}`, {
+    method: 'DELETE'
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Error al eliminar el producto del carrito');
+    }
+  })
+  .then(data => {
+    // Eliminar la fila de la tabla en la página
+    const row = document.querySelector(`#cantidad-${id_producto}`).closest('tr');
+    row.remove();
+    alert('Producto eliminado del carrito');
+  })
+  .catch(error => {
+    console.error('Error al eliminar el producto del carrito:', error);
+  });
+}
+</script>
+

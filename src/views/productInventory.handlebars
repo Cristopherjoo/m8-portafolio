@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="row">
+    {{#each products}}
+    <div class="col-md-4 col-sm-6 col-12 mb-1">
+      <div class="card mt-4">
+<img src="{{imagen}}" class="card-img-top" alt="{{nombre_producto}}" width="300" height="400">
+        <div class="card-body">
+          <h5 class="card-title">{{nombre_producto}}</h5>
+          <p class="card-text">Precio: ${{precio}}</p>
+          <p class="card-text">Actualizado: {{formatDate updatedAt}}</p>
+          <a href="/vermas/{{id_producto}}" class="btn btn-primary">Ver Detalles</a>
+          <a href="#" class="btn btn-primary" onclick="addOneToCarro('{{id_producto}}'); document.getElementById('cantidad-{{id_producto}}').textContent++;">Añadir al Carro</a>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
+
+
+<style>
+  main{
+  min-height: 80vw;
+}
+</style>
+<script>
+  function addOneToCarro(id_producto) {
+  fetch(`/carrotemp/add/${id_producto}`, {
+    method: 'POST',
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Se añadió un producto al carrito:', data);
+    alert('Se ha añadido un producto al carrito');
+  })
+  .catch(error => {
+    console.error('Error al añadir producto al carrito:', error);
+  });
+};
+</script>
+<script>
+  const container = document.querySelector('.container');
+  container.dataset.isAuthenticated = isAuthenticated() ? 'true' : 'false';
+</script>
+
+

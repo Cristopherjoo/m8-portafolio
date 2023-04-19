@@ -1,0 +1,16 @@
+<!-- vermas.handlebars -->
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+<img src="{{producto.imagen}}" class="img-fluid" alt="{{producto.nombre_producto}}" width="450" height="350">
+    </div>
+    <div class="col-md-6 col-sm-12">
+      <h2>{{producto.nombre_producto}}</h2>
+      <p>Precio: ${{producto.precio}}</p>
+      <p>Stock: {{producto.stock}}</p>
+      <p>Categoría: {{producto.categoria}}</p>
+      <p>Descripción: {{producto.descripcion}}</p>
+      <p>Producto Actualizado en: {{formatDate producto.updatedAt}}</p>
+    </div>
+  </div>
+</div>

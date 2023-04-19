@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js" integrity="sha512-LUKzDoJKOLqnxGWWIBM4lzRBlxcva2ZTztO8bTcWPmDSpkErWx0bSP4pdsjNH8kiHAUPaT06UXcb+vOEZH+HpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Ecommerce-Elephantebd</title>
+</head>
+<body>
+
+    {{> navbar}}
+    
+    <main class="container">
+        {{{body}}}
+    </main>
+  
+    {{> footer}}
+   
+    {{> login-modal}}
+</body>
+
+<style>
+  main{
+  min-height: 80vw;
+}
+</style>
+
+<script>
+  console.log('El archivo JavaScript se ha cargado correctamente');
+
+  const modal = document.getElementById('login-modal')
+  const closeBtn = document.querySelector('.close')
+
+const isAuthenticated = () => {
+ 
+  return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') !== '';
+};
+console.log('isAuthenticated:', isAuthenticated())
+
+
+  if (isAuthenticated()) { 
+    modal.style.display = 'none';
+  }
+
+  likeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!isAuthenticated()) {
+        modal.style.display = 'block';
+      }
+    });
+  });
+
+  dislikeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!isAuthenticated()) {
+        modal.style.display = 'block';
+      }
+    });
+  });
+
+  closeBtn.onclick = () => {
+    modal.style.display = 'none';
+  };
+
+  window.onclick = (event) => {
+    if (event.target === modal) {
+      modal.style.display = 'none'
+    }
+  }
+</script>
+<script>
+
+  const linkInventario = document.getElementById('linkInventario') 
+  linkInventario.addEventListener('click', (event) => {
+    if (!isAuthenticated()) {
+      event.preventDefault()
+      modal.style.display = 'block'
+    }
+  })
+</script>
+<script>
+ 
+  const linkCarro = document.getElementById('linkCarro');
+
+  
+  linkCarro.addEventListener('click', (event) => {
+    if (!isAuthenticated()) {
+      event.preventDefault();
+      modal.style.display = 'block'
+    }
+  });
+</script>
+<script>
+
+  const linkVentas = document.getElementById('linkVentas')  
+  linkVentas.addEventListener('click', (event) => {
+    if (!isAuthenticated()) {
+      event.preventDefault()
+      modal.style.display = 'block'
+    }
+  })
+</script>
+</html>
