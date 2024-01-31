@@ -1,7 +1,9 @@
-
 import {Sequelize}  from "sequelize"
-export const sequelize  = new Sequelize ('kftuioah','kftuioah','gmwTi2j1n-9_aSv-qpmymK-9OeN0Iv-D',
+export const sequelize  = new Sequelize ('qtkjbgnt','qtkjbgnt','MdW47rWYy960qvW5ejBGU_pfdhSgcM6M',
 {
-    host : 'motty.db.elephantsql.com',
-    dialect:'postgres'
+    host : 'rosie.db.elephantsql.com',
+    dialect:'postgres',
+    port: 5432,
+  logging: false,
+
 })
